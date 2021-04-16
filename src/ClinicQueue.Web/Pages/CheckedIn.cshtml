@@ -1,0 +1,11 @@
+@page "{id:int}"
+@model CheckedInModel
+@{
+    ViewData["Title"] = "Checked in";
+}
+
+<div class="text-center">
+    <h1>You're checked in</h1>
+    <p class="lead">Thanks, @Model.Entry.Patient.FullName. Please take a seat.</p>
+    <p>Reference: @Model.Entry.Id</p>
+</div>

@@ -1,12 +1,22 @@
+using ClinicQueue.Web.Data;
+using ClinicQueue.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace ClinicQueue.Web.Pages
 {
     public class CheckInModel : PageModel
     {
+        private readonly ClinicDbContext _db;
+
+        public CheckInModel(ClinicDbContext db)
+        {
+            _db = db;
+        }
+
         [BindProperty]
         public CheckInInput Input { get; set; }
 
@@ -14,15 +24,34 @@ namespace ClinicQueue.Web.Pages
         {
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            // TODO: save
-            return RedirectToPage("/Index");
+            var now = DateTime.UtcNow;
+            var patient = new Patient
+            {
+                FullName = Input.FullName,
+                Phone = Input.Phone,
+                DateOfBirth = Input.DateOfBirth,
+                CreatedAt = now
+            };
+
+            var entry = new QueueEntry
+            {
+                Patient = patient,
+                Status = QueueStatus.Waiting,
+                Reason = Input.Reason,
+                CheckedInAt = now
+            };
+
+            _db.QueueEntries.Add(entry);
+            await _db.SaveChangesAsync();
+
+            return RedirectToPage("/CheckedIn", new { id = entry.Id });
         }
 
         public class CheckInInput
