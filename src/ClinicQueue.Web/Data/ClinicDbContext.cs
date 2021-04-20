@@ -26,6 +26,11 @@ namespace ClinicQueue.Web.Data
             modelBuilder.Entity<QueueEntry>(b =>
             {
                 b.Property(e => e.Reason).HasMaxLength(200);
+                b.Property(e => e.QueueDate).HasColumnType("date");
+                b.Property(e => e.LookupCode).HasMaxLength(12);
+
+                b.HasIndex(e => new { e.QueueDate, e.TicketNumber }).IsUnique();
+                b.HasIndex(e => e.LookupCode).IsUnique();
 
                 b.HasOne(e => e.Patient)
                     .WithMany(p => p.QueueEntries)

@@ -10,6 +10,14 @@ namespace ClinicQueue.Web.Models
 
         public Patient Patient { get; set; }
 
+        /// <summary>The clinic day this entry belongs to (date only).</summary>
+        public DateTime QueueDate { get; set; }
+
+        /// <summary>Sequential per day, starting at 1.</summary>
+        public int TicketNumber { get; set; }
+
+        public string LookupCode { get; set; }
+
         public QueueStatus Status { get; set; }
 
         public string Reason { get; set; }
