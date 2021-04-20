@@ -63,8 +63,15 @@ namespace ClinicQueue.Web.Migrations
                     b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("LookupCode")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("QueueDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Reason")
                         .HasMaxLength(200)
@@ -73,9 +80,19 @@ namespace ClinicQueue.Web.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("TicketNumber")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("LookupCode")
+                        .IsUnique()
+                        .HasFilter("[LookupCode] IS NOT NULL");
+
                     b.HasIndex("PatientId");
+
+                    b.HasIndex("QueueDate", "TicketNumber")
+                        .IsUnique();
 
                     b.ToTable("QueueEntries");
                 });
