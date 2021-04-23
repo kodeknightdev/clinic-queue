@@ -1,9 +1,12 @@
 using ClinicQueue.Web.Data;
 using ClinicQueue.Web.Models;
+using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ClinicQueue.Web.Pages
@@ -32,6 +35,11 @@ namespace ClinicQueue.Web.Pages
             }
 
             var now = DateTime.UtcNow;
+            var today = now.Date;
+            var lastTicket = await _db.QueueEntries
+                .Where(e => e.QueueDate == today)
+                .MaxAsync(e => (int?)e.TicketNumber);
+
             var patient = new Patient
             {
                 FullName = Input.FullName,
@@ -43,6 +51,9 @@ namespace ClinicQueue.Web.Pages
             var entry = new QueueEntry
             {
                 Patient = patient,
+                QueueDate = today,
+                TicketNumber = (lastTicket ?? 0) + 1,
+                LookupCode = LookupCode.Generate(),
                 Status = QueueStatus.Waiting,
                 Reason = Input.Reason,
                 CheckedInAt = now
