@@ -1,0 +1,35 @@
+@page "{code?}"
+@model StatusModel
+@{
+    ViewData["Title"] = "Queue status";
+}
+
+<h1>Queue status</h1>
+
+@if (Model.Entry == null)
+{
+    <form method="get" class="form-inline mb-3">
+        <label class="mr-2" for="code">Your code</label>
+        <input id="code" name="code" class="form-control mr-2" value="@Model.Code" maxlength="12" autocomplete="off" />
+        <button type="submit" class="btn btn-primary">Look up</button>
+    </form>
+
+    @if (Model.NotFoundCode)
+    {
+        <div class="alert alert-warning">We couldn't find that code. Please check it, or ask at the front desk.</div>
+    }
+}
+else
+{
+    <div class="card">
+        <div class="card-body">
+            <p class="mb-1">Ticket</p>
+            <p class="display-4">@Model.Entry.TicketNumber</p>
+            <p>Status: <strong>@Model.Entry.Status</strong></p>
+            @if (Model.Position.HasValue)
+            {
+                <p>You are number <strong>@Model.Position</strong> in the queue.</p>
+            }
+        </div>
+    </div>
+}
