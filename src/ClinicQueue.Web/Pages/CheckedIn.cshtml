@@ -10,4 +10,8 @@
     <p class="mb-1">Your ticket number</p>
     <p class="display-3 font-weight-bold">@Model.Entry.TicketNumber</p>
     <p>Your code: <code class="lookup-code">@Model.Entry.LookupCode</code></p>
+    <p>
+        <a class="btn btn-outline-primary" asp-page="/Status" asp-route-code="@Model.Entry.LookupCode">See your place in the queue</a>
+    </p>
+    <p class="text-muted small">Keep this page open or bookmark it to check your place later.</p>
 </div>
