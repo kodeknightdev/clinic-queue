@@ -1,5 +1,6 @@
 using ClinicQueue.Web.Data;
 using ClinicQueue.Web.Models;
+using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -32,9 +33,10 @@ namespace ClinicQueue.Web.Pages
                 return;
             }
 
+            var code = LookupCode.Normalize(Code);
             Entry = await _db.QueueEntries
                 .Include(e => e.Patient)
-                .SingleOrDefaultAsync(e => e.LookupCode == Code);
+                .SingleOrDefaultAsync(e => e.LookupCode == code);
 
             if (Entry == null)
             {
