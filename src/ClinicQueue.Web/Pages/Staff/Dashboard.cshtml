@@ -6,23 +6,58 @@
 
 <h1>Today's queue</h1>
 
-<table class="table">
+<h2 class="h4 mt-4">Waiting (@Model.Waiting.Count)</h2>
+<table class="table table-sm">
     <thead>
         <tr>
             <th>Ticket</th>
             <th>Name</th>
             <th>Reason</th>
             <th>Checked in</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var entry in Model.Waiting)
         {
             <tr>
-                <td>@entry.TicketNumber</td>
+                <td class="ticket">@entry.TicketNumber</td>
                 <td>@entry.Patient.FullName</td>
                 <td>@entry.Reason</td>
                 <td>@entry.CheckedInAt.ToString("HH:mm")</td>
+                <td class="text-right text-nowrap">
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2 class="h4 mt-4">Called (@Model.Called.Count)</h2>
+<table class="table table-sm">
+    <tbody>
+        @foreach (var entry in Model.Called)
+        {
+            <tr>
+                <td class="ticket">@entry.TicketNumber</td>
+                <td>@entry.Patient.FullName</td>
+                <td>@entry.CalledAt?.ToString("HH:mm")</td>
+                <td class="text-right text-nowrap">
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2 class="h4 mt-4">Done (@Model.Done.Count)</h2>
+<table class="table table-sm text-muted">
+    <tbody>
+        @foreach (var entry in Model.Done)
+        {
+            <tr>
+                <td>@entry.TicketNumber</td>
+                <td>@entry.Patient.FullName</td>
+                <td>@entry.Status</td>
+                <td>@entry.CompletedAt?.ToString("HH:mm")</td>
             </tr>
         }
     </tbody>
