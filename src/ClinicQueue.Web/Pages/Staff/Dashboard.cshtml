@@ -1,0 +1,29 @@
+@page
+@model ClinicQueue.Web.Pages.Staff.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1>Today's queue</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ticket</th>
+            <th>Name</th>
+            <th>Reason</th>
+            <th>Checked in</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entry in Model.Waiting)
+        {
+            <tr>
+                <td>@entry.TicketNumber</td>
+                <td>@entry.Patient.FullName</td>
+                <td>@entry.Reason</td>
+                <td>@entry.CheckedInAt.ToString("HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>
