@@ -45,6 +45,12 @@
                 <td>@entry.Patient.FullName</td>
                 <td>@entry.CalledAt?.ToString("HH:mm")</td>
                 <td class="text-right text-nowrap">
+                    <form method="post" asp-page-handler="Complete" asp-route-id="@entry.Id" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-success">Done</button>
+                    </form>
+                    <form method="post" asp-page-handler="NoShow" asp-route-id="@entry.Id" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">No-show</button>
+                    </form>
                 </td>
             </tr>
         }

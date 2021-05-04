@@ -45,6 +45,36 @@ namespace ClinicQueue.Web.Pages.Staff
             return RedirectToPage();
         }
 
+        public async Task<IActionResult> OnPostCompleteAsync(int id)
+        {
+            var entry = await _db.QueueEntries.FindAsync(id);
+            if (entry == null)
+            {
+                return NotFound();
+            }
+
+            entry.Status = QueueStatus.Completed;
+            entry.CompletedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostNoShowAsync(int id)
+        {
+            var entry = await _db.QueueEntries.FindAsync(id);
+            if (entry == null)
+            {
+                return NotFound();
+            }
+
+            entry.Status = QueueStatus.NoShow;
+            entry.CompletedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+
+            return RedirectToPage();
+        }
+
         private async Task LoadAsync()
         {
             var today = DateTime.UtcNow.Date;
