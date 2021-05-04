@@ -91,3 +91,30 @@ body {
 .field-validation-error {
   font-size: .9rem;
 }
+
+/* Status badges
+-------------------------------------------------- */
+.badge-status {
+  font-weight: 500;
+  padding: .3em .6em;
+}
+
+.badge-status-waiting {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.badge-status-called {
+  background-color: #ffe08a;
+  color: #5c4500;
+}
+
+.badge-status-completed {
+  background-color: #c8e6c9;
+  color: #1b5e20;
+}
+
+.badge-status-noshow {
+  background-color: #f8d7da;
+  color: #721c24;
+}

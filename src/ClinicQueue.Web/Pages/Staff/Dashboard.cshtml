@@ -65,7 +65,7 @@
             <tr>
                 <td>@entry.TicketNumber</td>
                 <td>@entry.Patient.FullName</td>
-                <td>@entry.Status</td>
+                <td><partial name="_StatusBadge" model="entry.Status" /></td>
                 <td>@entry.CompletedAt?.ToString("HH:mm")</td>
             </tr>
         }
