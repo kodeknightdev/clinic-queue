@@ -30,6 +30,21 @@ namespace ClinicQueue.Web.Pages.Staff
             await LoadAsync();
         }
 
+        public async Task<IActionResult> OnPostCallAsync(int id)
+        {
+            var entry = await _db.QueueEntries.FindAsync(id);
+            if (entry == null)
+            {
+                return NotFound();
+            }
+
+            entry.Status = QueueStatus.Called;
+            entry.CalledAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+
+            return RedirectToPage();
+        }
+
         private async Task LoadAsync()
         {
             var today = DateTime.UtcNow.Date;
