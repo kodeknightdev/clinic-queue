@@ -30,7 +30,16 @@ namespace ClinicQueue.Web.Pages.Staff
             await LoadAsync();
         }
 
-        public async Task<IActionResult> OnPostCallAsync(int id)
+        public Task<IActionResult> OnPostCallAsync(int id) =>
+            UpdateStatusAsync(id, QueueStatus.Waiting, QueueStatus.Called, e => e.CalledAt = DateTime.UtcNow);
+
+        public Task<IActionResult> OnPostCompleteAsync(int id) =>
+            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.Completed, e => e.CompletedAt = DateTime.UtcNow);
+
+        public Task<IActionResult> OnPostNoShowAsync(int id) =>
+            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.NoShow, e => e.CompletedAt = DateTime.UtcNow);
+
+        private async Task<IActionResult> UpdateStatusAsync(int id, QueueStatus from, QueueStatus to, Action<QueueEntry> apply)
         {
             var entry = await _db.QueueEntries.FindAsync(id);
             if (entry == null)
@@ -38,38 +47,14 @@ namespace ClinicQueue.Web.Pages.Staff
                 return NotFound();
             }
 
-            entry.Status = QueueStatus.Called;
-            entry.CalledAt = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
-
-            return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostCompleteAsync(int id)
-        {
-            var entry = await _db.QueueEntries.FindAsync(id);
-            if (entry == null)
+            // Someone else may have already moved this entry on (two desks, stale page).
+            if (entry.Status != from)
             {
-                return NotFound();
+                return RedirectToPage();
             }
 
-            entry.Status = QueueStatus.Completed;
-            entry.CompletedAt = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
-
-            return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostNoShowAsync(int id)
-        {
-            var entry = await _db.QueueEntries.FindAsync(id);
-            if (entry == null)
-            {
-                return NotFound();
-            }
-
-            entry.Status = QueueStatus.NoShow;
-            entry.CompletedAt = DateTime.UtcNow;
+            entry.Status = to;
+            apply(entry);
             await _db.SaveChangesAsync();
 
             return RedirectToPage();
