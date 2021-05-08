@@ -48,7 +48,7 @@ namespace ClinicQueue.Web.Pages
             {
                 var ahead = await _db.QueueEntries.CountAsync(e =>
                     e.QueueDate == Entry.QueueDate &&
-                    e.Status != QueueStatus.Completed &&
+                    e.Status == QueueStatus.Waiting &&
                     e.TicketNumber < Entry.TicketNumber);
 
                 Position = ahead + 1;
