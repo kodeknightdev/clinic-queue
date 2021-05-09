@@ -5,6 +5,8 @@ namespace ClinicQueue.Web.Models
         Waiting = 0,
         Called = 1,
         Completed = 2,
-        NoShow = 3
+        NoShow = 3,
+        InProgress = 4,
+        Cancelled = 5
     }
 }

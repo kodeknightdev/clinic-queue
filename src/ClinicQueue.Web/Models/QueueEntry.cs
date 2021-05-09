@@ -26,6 +26,8 @@ namespace ClinicQueue.Web.Models
 
         public DateTime? CalledAt { get; set; }
 
+        public DateTime? StartedAt { get; set; }
+
         public DateTime? CompletedAt { get; set; }
     }
 }

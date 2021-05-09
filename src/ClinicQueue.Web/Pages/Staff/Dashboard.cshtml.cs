@@ -23,6 +23,8 @@ namespace ClinicQueue.Web.Pages.Staff
 
         public IList<QueueEntry> Called { get; private set; } = new List<QueueEntry>();
 
+        public IList<QueueEntry> InProgress { get; private set; } = new List<QueueEntry>();
+
         public IList<QueueEntry> Done { get; private set; } = new List<QueueEntry>();
 
         public async Task OnGetAsync()
@@ -33,8 +35,11 @@ namespace ClinicQueue.Web.Pages.Staff
         public Task<IActionResult> OnPostCallAsync(int id) =>
             UpdateStatusAsync(id, QueueStatus.Waiting, QueueStatus.Called, e => e.CalledAt = DateTime.UtcNow);
 
+        public Task<IActionResult> OnPostStartAsync(int id) =>
+            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.InProgress, e => e.StartedAt = DateTime.UtcNow);
+
         public Task<IActionResult> OnPostCompleteAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.Completed, e => e.CompletedAt = DateTime.UtcNow);
+            UpdateStatusAsync(id, QueueStatus.InProgress, QueueStatus.Completed, e => e.CompletedAt = DateTime.UtcNow);
 
         public Task<IActionResult> OnPostNoShowAsync(int id) =>
             UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.NoShow, e => e.CompletedAt = DateTime.UtcNow);
@@ -71,6 +76,7 @@ namespace ClinicQueue.Web.Pages.Staff
 
             Waiting = entries.Where(e => e.Status == QueueStatus.Waiting).ToList();
             Called = entries.Where(e => e.Status == QueueStatus.Called).ToList();
+            InProgress = entries.Where(e => e.Status == QueueStatus.InProgress).ToList();
             Done = entries.Where(e => e.Status == QueueStatus.Completed || e.Status == QueueStatus.NoShow).ToList();
         }
     }

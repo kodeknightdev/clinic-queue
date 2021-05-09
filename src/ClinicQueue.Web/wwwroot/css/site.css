@@ -118,3 +118,14 @@ body {
   background-color: #f8d7da;
   color: #721c24;
 }
+
+.badge-status-inprogress {
+  background-color: #cfe2ff;
+  color: #084298;
+}
+
+.badge-status-cancelled {
+  background-color: #f1f3f5;
+  color: #868e96;
+  text-decoration: line-through;
+}
