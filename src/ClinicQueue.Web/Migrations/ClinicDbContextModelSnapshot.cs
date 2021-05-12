@@ -63,6 +63,9 @@ namespace ClinicQueue.Web.Migrations
                     b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsPriority")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LookupCode")
                         .HasMaxLength(12)
                         .HasColumnType("nvarchar(12)");
@@ -76,6 +79,9 @@ namespace ClinicQueue.Web.Migrations
                     b.Property<string>("Reason")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
