@@ -22,6 +22,8 @@ namespace ClinicQueue.Web.Models
 
         public string Reason { get; set; }
 
+        public bool IsPriority { get; set; }
+
         public DateTime CheckedInAt { get; set; }
 
         public DateTime? CalledAt { get; set; }

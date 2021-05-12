@@ -29,6 +29,10 @@
                 <textarea asp-for="Input.Reason" class="form-control" rows="2"></textarea>
                 <span asp-validation-for="Input.Reason" class="text-danger"></span>
             </div>
+            <div class="form-group form-check">
+                <input asp-for="Input.IsPriority" class="form-check-input" />
+                <label asp-for="Input.IsPriority" class="form-check-label"></label>
+            </div>
             <button type="submit" class="btn btn-primary btn-lg">Check in</button>
         </form>
     </div>

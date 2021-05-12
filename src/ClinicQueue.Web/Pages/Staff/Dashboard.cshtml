@@ -21,7 +21,12 @@
         @foreach (var entry in Model.Waiting)
         {
             <tr>
-                <td class="ticket">@entry.TicketNumber</td>
+                <td class="ticket">@entry.TicketNumber
+                    @if (entry.IsPriority)
+                    {
+                        <span class="badge badge-danger ml-1">Urgent</span>
+                    }
+                </td>
                 <td>@entry.Patient.FullName</td>
                 <td>@entry.Reason</td>
                 <td>@entry.CheckedInAt.ToString("HH:mm")</td>
@@ -41,7 +46,12 @@
         @foreach (var entry in Model.Called)
         {
             <tr>
-                <td class="ticket">@entry.TicketNumber</td>
+                <td class="ticket">@entry.TicketNumber
+                    @if (entry.IsPriority)
+                    {
+                        <span class="badge badge-danger ml-1">Urgent</span>
+                    }
+                </td>
                 <td>@entry.Patient.FullName</td>
                 <td>@entry.CalledAt?.ToString("HH:mm")</td>
                 <td class="text-right text-nowrap">
@@ -63,7 +73,12 @@
         @foreach (var entry in Model.InProgress)
         {
             <tr>
-                <td class="ticket">@entry.TicketNumber</td>
+                <td class="ticket">@entry.TicketNumber
+                    @if (entry.IsPriority)
+                    {
+                        <span class="badge badge-danger ml-1">Urgent</span>
+                    }
+                </td>
                 <td>@entry.Patient.FullName</td>
                 <td>@entry.StartedAt?.ToString("HH:mm")</td>
                 <td class="text-right text-nowrap">

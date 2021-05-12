@@ -56,6 +56,7 @@ namespace ClinicQueue.Web.Pages
                 LookupCode = LookupCode.Generate(),
                 Status = QueueStatus.Waiting,
                 Reason = Input.Reason,
+                IsPriority = Input.IsPriority,
                 CheckedInAt = now
             };
 
@@ -83,6 +84,9 @@ namespace ClinicQueue.Web.Pages
             [StringLength(200)]
             [Display(Name = "Reason for visit")]
             public string Reason { get; set; }
+
+            [Display(Name = "Urgent (front desk use)")]
+            public bool IsPriority { get; set; }
         }
     }
 }
