@@ -71,7 +71,8 @@ namespace ClinicQueue.Web.Pages.Staff
             var entries = await _db.QueueEntries
                 .Include(e => e.Patient)
                 .Where(e => e.QueueDate == today)
-                .OrderBy(e => e.TicketNumber)
+                .OrderByDescending(e => e.IsPriority)
+                .ThenBy(e => e.TicketNumber)
                 .ToListAsync();
 
             Waiting = entries.Where(e => e.Status == QueueStatus.Waiting).ToList();
