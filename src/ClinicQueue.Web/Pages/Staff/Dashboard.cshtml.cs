@@ -1,5 +1,6 @@
 using ClinicQueue.Web.Data;
 using ClinicQueue.Web.Models;
+using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace ClinicQueue.Web.Pages.Staff
     public class DashboardModel : PageModel
     {
         private readonly ClinicDbContext _db;
+        private readonly IClock _clock;
 
-        public DashboardModel(ClinicDbContext db)
+        public DashboardModel(ClinicDbContext db, IClock clock)
         {
             _db = db;
+            _clock = clock;
         }
 
         public IList<QueueEntry> Waiting { get; private set; } = new List<QueueEntry>();
@@ -33,16 +36,16 @@ namespace ClinicQueue.Web.Pages.Staff
         }
 
         public Task<IActionResult> OnPostCallAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Waiting, QueueStatus.Called, e => e.CalledAt = DateTime.UtcNow);
+            UpdateStatusAsync(id, QueueStatus.Waiting, QueueStatus.Called, e => e.CalledAt = _clock.Now);
 
         public Task<IActionResult> OnPostStartAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.InProgress, e => e.StartedAt = DateTime.UtcNow);
+            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.InProgress, e => e.StartedAt = _clock.Now);
 
         public Task<IActionResult> OnPostCompleteAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.InProgress, QueueStatus.Completed, e => e.CompletedAt = DateTime.UtcNow);
+            UpdateStatusAsync(id, QueueStatus.InProgress, QueueStatus.Completed, e => e.CompletedAt = _clock.Now);
 
         public Task<IActionResult> OnPostNoShowAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.NoShow, e => e.CompletedAt = DateTime.UtcNow);
+            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.NoShow, e => e.CompletedAt = _clock.Now);
 
         private async Task<IActionResult> UpdateStatusAsync(int id, QueueStatus from, QueueStatus to, Action<QueueEntry> apply)
         {
@@ -67,7 +70,7 @@ namespace ClinicQueue.Web.Pages.Staff
 
         private async Task LoadAsync()
         {
-            var today = DateTime.UtcNow.Date;
+            var today = _clock.Now.Date;
             var entries = await _db.QueueEntries
                 .Include(e => e.Patient)
                 .Where(e => e.QueueDate == today)

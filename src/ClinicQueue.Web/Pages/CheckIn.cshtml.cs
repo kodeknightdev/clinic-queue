@@ -14,10 +14,12 @@ namespace ClinicQueue.Web.Pages
     public class CheckInModel : PageModel
     {
         private readonly ClinicDbContext _db;
+        private readonly IClock _clock;
 
-        public CheckInModel(ClinicDbContext db)
+        public CheckInModel(ClinicDbContext db, IClock clock)
         {
             _db = db;
+            _clock = clock;
         }
 
         [BindProperty]
@@ -34,7 +36,7 @@ namespace ClinicQueue.Web.Pages
                 return Page();
             }
 
-            var now = DateTime.UtcNow;
+            var now = _clock.Now;
             var today = now.Date;
             var lastTicket = await _db.QueueEntries
                 .Where(e => e.QueueDate == today)

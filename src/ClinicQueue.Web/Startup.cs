@@ -1,4 +1,5 @@
 using ClinicQueue.Web.Data;
+using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,8 @@ namespace ClinicQueue.Web
         {
             services.AddDbContext<ClinicDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ClinicDb")));
+
+            services.AddSingleton<IClock, LocalClock>();
 
             services.AddRazorPages();
         }
