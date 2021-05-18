@@ -14,6 +14,7 @@
             <th>Name</th>
             <th>Reason</th>
             <th>Checked in</th>
+            <th>Waited</th>
             <th></th>
         </tr>
     </thead>
@@ -30,6 +31,7 @@
                 <td>@entry.Patient.FullName</td>
                 <td>@entry.Reason</td>
                 <td>@entry.CheckedInAt.ToString("HH:mm")</td>
+                <td>@((int)Math.Max(0, (Model.Now - entry.CheckedInAt).TotalMinutes)) min</td>
                 <td class="text-right text-nowrap">
                     <form method="post" asp-page-handler="Call" asp-route-id="@entry.Id" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-primary">Call</button>

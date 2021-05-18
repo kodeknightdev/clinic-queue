@@ -22,6 +22,8 @@ namespace ClinicQueue.Web.Pages.Staff
             _clock = clock;
         }
 
+        public DateTime Now { get; private set; }
+
         public IList<QueueEntry> Waiting { get; private set; } = new List<QueueEntry>();
 
         public IList<QueueEntry> Called { get; private set; } = new List<QueueEntry>();
@@ -70,7 +72,8 @@ namespace ClinicQueue.Web.Pages.Staff
 
         private async Task LoadAsync()
         {
-            var today = _clock.Now.Date;
+            Now = _clock.Now;
+            var today = Now.Date;
             var entries = await _db.QueueEntries
                 .Include(e => e.Patient)
                 .Where(e => e.QueueDate == today)
