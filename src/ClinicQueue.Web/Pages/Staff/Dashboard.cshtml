@@ -60,6 +60,9 @@
                     <form method="post" asp-page-handler="Start" asp-route-id="@entry.Id" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-primary">Start consult</button>
                     </form>
+                    <form method="post" asp-page-handler="Requeue" asp-route-id="@entry.Id" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Back to queue</button>
+                    </form>
                     <form method="post" asp-page-handler="NoShow" asp-route-id="@entry.Id" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-outline-danger">No-show</button>
                     </form>

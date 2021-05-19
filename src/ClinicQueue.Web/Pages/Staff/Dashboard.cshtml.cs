@@ -49,6 +49,9 @@ namespace ClinicQueue.Web.Pages.Staff
         public Task<IActionResult> OnPostNoShowAsync(int id) =>
             UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.NoShow, e => e.CompletedAt = _clock.Now);
 
+        public Task<IActionResult> OnPostRequeueAsync(int id) =>
+            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.Waiting, e => e.CalledAt = null);
+
         private async Task<IActionResult> UpdateStatusAsync(int id, QueueStatus from, QueueStatus to, Action<QueueEntry> apply)
         {
             var entry = await _db.QueueEntries.FindAsync(id);
