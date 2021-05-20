@@ -6,110 +6,118 @@
 
 <h1>Today's queue</h1>
 
-<h2 class="h4 mt-4">Waiting (@Model.Waiting.Count)</h2>
-<table class="table table-sm">
-    <thead>
-        <tr>
-            <th>Ticket</th>
-            <th>Name</th>
-            <th>Reason</th>
-            <th>Checked in</th>
-            <th>Waited</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var entry in Model.Waiting)
-        {
+<section class="card queue-section mb-3">
+    <div class="card-header"><strong>Waiting</strong> <span class="badge badge-light">@Model.Waiting.Count</span></div>
+    <table class="table table-sm mb-0">
+        <thead>
             <tr>
-                <td class="ticket">@entry.TicketNumber
-                    @if (entry.IsPriority)
-                    {
-                        <span class="badge badge-danger ml-1">Urgent</span>
-                    }
-                </td>
-                <td>@entry.Patient.FullName</td>
-                <td>@entry.Reason</td>
-                <td>@entry.CheckedInAt.ToString("HH:mm")</td>
-                <td>@((int)Math.Max(0, (Model.Now - entry.CheckedInAt).TotalMinutes)) min</td>
-                <td class="text-right text-nowrap">
-                    <form method="post" asp-page-handler="Call" asp-route-id="@entry.Id" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-primary">Call</button>
-                    </form>
-                    <form method="post" asp-page-handler="Cancel" asp-route-id="@entry.Id" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Cancel</button>
-                    </form>
-                </td>
+                <th>Ticket</th>
+                <th>Name</th>
+                <th>Reason</th>
+                <th>Checked in</th>
+                <th>Waited</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var entry in Model.Waiting)
+            {
+                <tr>
+                    <td class="ticket">@entry.TicketNumber
+                        @if (entry.IsPriority)
+                        {
+                            <span class="badge badge-danger ml-1">Urgent</span>
+                        }
+                    </td>
+                    <td>@entry.Patient.FullName</td>
+                    <td>@entry.Reason</td>
+                    <td>@entry.CheckedInAt.ToString("HH:mm")</td>
+                    <td>@((int)Math.Max(0, (Model.Now - entry.CheckedInAt).TotalMinutes)) min</td>
+                    <td class="text-right text-nowrap">
+                        <form method="post" asp-page-handler="Call" asp-route-id="@entry.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-primary">Call</button>
+                        </form>
+                        <form method="post" asp-page-handler="Cancel" asp-route-id="@entry.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
 
-<h2 class="h4 mt-4">Called (@Model.Called.Count)</h2>
-<table class="table table-sm">
-    <tbody>
-        @foreach (var entry in Model.Called)
-        {
-            <tr>
-                <td class="ticket">@entry.TicketNumber
-                    @if (entry.IsPriority)
-                    {
-                        <span class="badge badge-danger ml-1">Urgent</span>
-                    }
-                </td>
-                <td>@entry.Patient.FullName</td>
-                <td>@entry.CalledAt?.ToString("HH:mm")</td>
-                <td class="text-right text-nowrap">
-                    <form method="post" asp-page-handler="Start" asp-route-id="@entry.Id" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-primary">Start consult</button>
-                    </form>
-                    <form method="post" asp-page-handler="Requeue" asp-route-id="@entry.Id" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Back to queue</button>
-                    </form>
-                    <form method="post" asp-page-handler="NoShow" asp-route-id="@entry.Id" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">No-show</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<section class="card queue-section mb-3">
+    <div class="card-header"><strong>Called</strong> <span class="badge badge-light">@Model.Called.Count</span></div>
+    <table class="table table-sm mb-0">
+        <tbody>
+            @foreach (var entry in Model.Called)
+            {
+                <tr>
+                    <td class="ticket">@entry.TicketNumber
+                        @if (entry.IsPriority)
+                        {
+                            <span class="badge badge-danger ml-1">Urgent</span>
+                        }
+                    </td>
+                    <td>@entry.Patient.FullName</td>
+                    <td>@entry.CalledAt?.ToString("HH:mm")</td>
+                    <td class="text-right text-nowrap">
+                        <form method="post" asp-page-handler="Start" asp-route-id="@entry.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-primary">Start consult</button>
+                        </form>
+                        <form method="post" asp-page-handler="Requeue" asp-route-id="@entry.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Back to queue</button>
+                        </form>
+                        <form method="post" asp-page-handler="NoShow" asp-route-id="@entry.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">No-show</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
 
-<h2 class="h4 mt-4">With clinician (@Model.InProgress.Count)</h2>
-<table class="table table-sm">
-    <tbody>
-        @foreach (var entry in Model.InProgress)
-        {
-            <tr>
-                <td class="ticket">@entry.TicketNumber
-                    @if (entry.IsPriority)
-                    {
-                        <span class="badge badge-danger ml-1">Urgent</span>
-                    }
-                </td>
-                <td>@entry.Patient.FullName</td>
-                <td>@entry.StartedAt?.ToString("HH:mm")</td>
-                <td class="text-right text-nowrap">
-                    <form method="post" asp-page-handler="Complete" asp-route-id="@entry.Id" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-success">Done</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<section class="card queue-section mb-3">
+    <div class="card-header"><strong>With clinician</strong> <span class="badge badge-light">@Model.InProgress.Count</span></div>
+    <table class="table table-sm mb-0">
+        <tbody>
+            @foreach (var entry in Model.InProgress)
+            {
+                <tr>
+                    <td class="ticket">@entry.TicketNumber
+                        @if (entry.IsPriority)
+                        {
+                            <span class="badge badge-danger ml-1">Urgent</span>
+                        }
+                    </td>
+                    <td>@entry.Patient.FullName</td>
+                    <td>@entry.StartedAt?.ToString("HH:mm")</td>
+                    <td class="text-right text-nowrap">
+                        <form method="post" asp-page-handler="Complete" asp-route-id="@entry.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-success">Done</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
 
-<h2 class="h4 mt-4">Done (@Model.Done.Count)</h2>
-<table class="table table-sm text-muted">
-    <tbody>
-        @foreach (var entry in Model.Done)
-        {
-            <tr>
-                <td>@entry.TicketNumber</td>
-                <td>@entry.Patient.FullName</td>
-                <td><partial name="_StatusBadge" model="entry.Status" /></td>
-                <td>@entry.CompletedAt?.ToString("HH:mm")</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<section class="card queue-section mb-3 text-muted">
+    <div class="card-header"><strong>Done</strong> <span class="badge badge-light">@Model.Done.Count</span></div>
+    <table class="table table-sm mb-0">
+        <tbody>
+            @foreach (var entry in Model.Done)
+            {
+                <tr>
+                    <td>@entry.TicketNumber</td>
+                    <td>@entry.Patient.FullName</td>
+                    <td><partial name="_StatusBadge" model="entry.Status" /></td>
+                    <td>@entry.CompletedAt?.ToString("HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

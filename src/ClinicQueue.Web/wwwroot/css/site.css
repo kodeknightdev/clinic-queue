@@ -129,3 +129,27 @@ body {
   color: #868e96;
   text-decoration: line-through;
 }
+
+/* Dashboard
+-------------------------------------------------- */
+.queue-section .card-header {
+  background-color: #f8f9fa;
+}
+
+.queue-section .table td,
+.queue-section .table th {
+  vertical-align: middle;
+}
+
+.queue-section .table tr:first-child td {
+  border-top: 0;
+}
+
+.queue-section td.ticket {
+  width: 6rem;
+  font-weight: 600;
+}
+
+.queue-section form + form {
+  margin-left: .25rem;
+}
