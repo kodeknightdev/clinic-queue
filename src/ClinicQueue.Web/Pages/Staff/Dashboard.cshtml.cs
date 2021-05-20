@@ -52,6 +52,9 @@ namespace ClinicQueue.Web.Pages.Staff
         public Task<IActionResult> OnPostRequeueAsync(int id) =>
             UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.Waiting, e => e.CalledAt = null);
 
+        public Task<IActionResult> OnPostCancelAsync(int id) =>
+            UpdateStatusAsync(id, QueueStatus.Waiting, QueueStatus.Cancelled, e => e.CompletedAt = _clock.Now);
+
         private async Task<IActionResult> UpdateStatusAsync(int id, QueueStatus from, QueueStatus to, Action<QueueEntry> apply)
         {
             var entry = await _db.QueueEntries.FindAsync(id);
@@ -87,7 +90,9 @@ namespace ClinicQueue.Web.Pages.Staff
             Waiting = entries.Where(e => e.Status == QueueStatus.Waiting).ToList();
             Called = entries.Where(e => e.Status == QueueStatus.Called).ToList();
             InProgress = entries.Where(e => e.Status == QueueStatus.InProgress).ToList();
-            Done = entries.Where(e => e.Status == QueueStatus.Completed || e.Status == QueueStatus.NoShow).ToList();
+            Done = entries
+                .Where(e => e.Status == QueueStatus.Completed || e.Status == QueueStatus.NoShow || e.Status == QueueStatus.Cancelled)
+                .ToList();
         }
     }
 }

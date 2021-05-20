@@ -36,6 +36,9 @@
                     <form method="post" asp-page-handler="Call" asp-route-id="@entry.Id" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-primary">Call</button>
                     </form>
+                    <form method="post" asp-page-handler="Cancel" asp-route-id="@entry.Id" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Cancel</button>
+                    </form>
                 </td>
             </tr>
         }
