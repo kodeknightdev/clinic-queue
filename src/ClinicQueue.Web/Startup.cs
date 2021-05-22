@@ -1,5 +1,6 @@
 using ClinicQueue.Web.Data;
 using ClinicQueue.Web.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,13 @@ namespace ClinicQueue.Web
         {
             services.AddDbContext<ClinicDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ClinicDb")));
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Staff/Login";
+                    options.LogoutPath = "/Staff/Logout";
+                });
 
             services.AddSingleton<IClock, LocalClock>();
 
@@ -48,6 +56,7 @@ namespace ClinicQueue.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
