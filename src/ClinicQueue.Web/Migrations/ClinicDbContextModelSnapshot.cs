@@ -103,6 +103,41 @@ namespace ClinicQueue.Web.Migrations
                     b.ToTable("QueueEntries");
                 });
 
+            modelBuilder.Entity("ClinicQueue.Web.Models.StaffUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("StaffUsers");
+                });
+
             modelBuilder.Entity("ClinicQueue.Web.Models.QueueEntry", b =>
                 {
                     b.HasOne("ClinicQueue.Web.Models.Patient", "Patient")
