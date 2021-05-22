@@ -14,6 +14,8 @@ namespace ClinicQueue.Web.Data
 
         public DbSet<QueueEntry> QueueEntries { get; set; }
 
+        public DbSet<StaffUser> StaffUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Patient>(b =>
@@ -36,6 +38,15 @@ namespace ClinicQueue.Web.Data
                     .WithMany(p => p.QueueEntries)
                     .HasForeignKey(e => e.PatientId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<StaffUser>(b =>
+            {
+                b.Property(u => u.Username).IsRequired().HasMaxLength(50);
+                b.Property(u => u.DisplayName).IsRequired().HasMaxLength(100);
+                b.Property(u => u.PasswordHash).IsRequired();
+
+                b.HasIndex(u => u.Username).IsUnique();
             });
         }
     }
