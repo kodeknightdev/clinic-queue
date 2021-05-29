@@ -37,6 +37,7 @@ namespace ClinicQueue.Web
             services.AddRazorPages(options =>
             {
                 options.Conventions.AuthorizeFolder("/Staff");
+                options.Conventions.AllowAnonymousToPage("/Staff/Login");
             });
         }
 
