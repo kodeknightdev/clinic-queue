@@ -66,7 +66,12 @@ namespace ClinicQueue.Web.Pages.Staff
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(identity));
 
-            return LocalRedirect(ReturnUrl ?? "/Staff/Dashboard");
+            if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+            {
+                return LocalRedirect(ReturnUrl);
+            }
+
+            return RedirectToPage("/Staff/Dashboard");
         }
 
         private static bool VerifyPassword(StaffUser user, string password)
