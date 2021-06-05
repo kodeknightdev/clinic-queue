@@ -42,15 +42,9 @@ namespace ClinicQueue.Web.Pages.Staff
             }
 
             var user = await _db.StaffUsers.SingleOrDefaultAsync(u => u.Username == Input.Username);
-            if (user == null || !user.IsActive)
+            if (user == null || !user.IsActive || !VerifyPassword(user, Input.Password))
             {
-                ErrorMessage = "Unknown user.";
-                return Page();
-            }
-
-            if (!VerifyPassword(user, Input.Password))
-            {
-                ErrorMessage = "Wrong password.";
+                ErrorMessage = "Invalid username or password.";
                 return Page();
             }
 
