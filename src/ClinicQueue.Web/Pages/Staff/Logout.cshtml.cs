@@ -8,7 +8,12 @@ namespace ClinicQueue.Web.Pages.Staff
 {
     public class LogoutModel : PageModel
     {
-        public async Task<IActionResult> OnGetAsync()
+        public IActionResult OnGet()
+        {
+            return RedirectToPage("/Index");
+        }
+
+        public async Task<IActionResult> OnPostAsync()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToPage("/Index");
