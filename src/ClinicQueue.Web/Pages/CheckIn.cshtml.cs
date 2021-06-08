@@ -1,25 +1,19 @@
-using ClinicQueue.Web.Data;
-using ClinicQueue.Web.Models;
 using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ClinicQueue.Web.Pages
 {
     public class CheckInModel : PageModel
     {
-        private readonly ClinicDbContext _db;
-        private readonly IClock _clock;
+        private readonly IQueueService _queue;
 
-        public CheckInModel(ClinicDbContext db, IClock clock)
+        public CheckInModel(IQueueService queue)
         {
-            _db = db;
-            _clock = clock;
+            _queue = queue;
         }
 
         [BindProperty]
@@ -36,34 +30,14 @@ namespace ClinicQueue.Web.Pages
                 return Page();
             }
 
-            var now = _clock.Now;
-            var today = now.Date;
-            var lastTicket = await _db.QueueEntries
-                .Where(e => e.QueueDate == today)
-                .MaxAsync(e => (int?)e.TicketNumber);
-
-            var patient = new Patient
+            var entry = await _queue.CheckInAsync(new CheckInRequest
             {
                 FullName = Input.FullName,
                 Phone = Input.Phone,
                 DateOfBirth = Input.DateOfBirth,
-                CreatedAt = now
-            };
-
-            var entry = new QueueEntry
-            {
-                Patient = patient,
-                QueueDate = today,
-                TicketNumber = (lastTicket ?? 0) + 1,
-                LookupCode = LookupCode.Generate(),
-                Status = QueueStatus.Waiting,
                 Reason = Input.Reason,
-                IsPriority = Input.IsPriority,
-                CheckedInAt = now
-            };
-
-            _db.QueueEntries.Add(entry);
-            await _db.SaveChangesAsync();
+                IsPriority = Input.IsPriority
+            });
 
             return RedirectToPage("/CheckedIn", new { id = entry.Id });
         }

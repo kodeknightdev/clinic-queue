@@ -1,24 +1,26 @@
-using ClinicQueue.Web.Data;
 using ClinicQueue.Web.Models;
 using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace ClinicQueue.Web.Pages
 {
     public class StatusModel : PageModel
     {
-        private readonly ClinicDbContext _db;
+        private readonly IQueueService _queue;
 
-        public StatusModel(ClinicDbContext db)
+        public StatusModel(IQueueService queue)
         {
-            _db = db;
+            _queue = queue;
         }
 
         [BindProperty(SupportsGet = true)]
         public string Code { get; set; }
+
+        /// <summary>Set when we've just redirected here from the check-in form.</summary>
+        [BindProperty(SupportsGet = true)]
+        public bool CheckedIn { get; set; }
 
         public QueueEntry Entry { get; private set; }
 
@@ -33,28 +35,14 @@ namespace ClinicQueue.Web.Pages
                 return;
             }
 
-            var code = LookupCode.Normalize(Code);
-            Entry = await _db.QueueEntries
-                .Include(e => e.Patient)
-                .SingleOrDefaultAsync(e => e.LookupCode == code);
-
+            Entry = await _queue.FindByLookupCodeAsync(Code);
             if (Entry == null)
             {
                 NotFoundCode = true;
                 return;
             }
 
-            if (Entry.Status == QueueStatus.Waiting)
-            {
-                var ahead = await _db.QueueEntries.CountAsync(e =>
-                    e.QueueDate == Entry.QueueDate &&
-                    e.Status == QueueStatus.Waiting &&
-                    e.Id != Entry.Id &&
-                    ((e.IsPriority && !Entry.IsPriority) ||
-                     (e.IsPriority == Entry.IsPriority && e.TicketNumber < Entry.TicketNumber)));
-
-                Position = ahead + 1;
-            }
+            Position = await _queue.GetPositionAsync(Entry);
         }
     }
 }
