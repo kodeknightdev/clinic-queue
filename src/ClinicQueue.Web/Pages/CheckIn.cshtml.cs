@@ -39,7 +39,7 @@ namespace ClinicQueue.Web.Pages
                 IsPriority = Input.IsPriority
             });
 
-            return RedirectToPage("/CheckedIn", new { id = entry.Id });
+            return RedirectToPage("/Status", new { code = entry.LookupCode, checkedIn = true });
         }
 
         public class CheckInInput

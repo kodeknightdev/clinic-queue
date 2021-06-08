@@ -10,7 +10,7 @@
 {
     <form method="get" class="form-inline mb-3">
         <label class="mr-2" for="code">Your code</label>
-        <input id="code" name="code" class="form-control mr-2" value="@Model.Code" maxlength="12" autocomplete="off" />
+        <input id="code" name="code" class="form-control mr-2 text-uppercase" value="@Model.Code" maxlength="12" autocomplete="off" />
         <button type="submit" class="btn btn-primary">Look up</button>
     </form>
 
@@ -21,15 +21,23 @@
 }
 else
 {
-    <div class="card">
-        <div class="card-body">
-            <p class="mb-1">Ticket</p>
-            <p class="display-4">@Model.Entry.TicketNumber</p>
-            <p>Status: <strong>@Model.Entry.Status</strong></p>
-            @if (Model.Position.HasValue)
-            {
-                <p>You are number <strong>@Model.Position</strong> in the queue.</p>
-            }
+    @if (Model.CheckedIn)
+    {
+        <div class="alert alert-success">You're checked in. Please take a seat &mdash; we'll call your number.</div>
+    }
+
+    <div class="card queue-status">
+        <div class="card-body text-center">
+            <p class="mb-1 text-muted">Your ticket</p>
+            <p class="ticket-number">@Model.Entry.TicketNumber</p>
+            <p class="mb-3">Code <code class="lookup-code">@Model.Entry.LookupCode</code></p>
+
+            <dl class="row queue-facts mb-0">
+                <dt class="col-6 text-right">Status</dt>
+                <dd class="col-6 text-left" data-field="status">@Model.Entry.Status.Label()</dd>
+                <dt class="col-6 text-right">Place in queue</dt>
+                <dd class="col-6 text-left" data-field="position">@(Model.Position?.ToString() ?? "–")</dd>
+            </dl>
         </div>
     </div>
 }

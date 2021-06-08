@@ -153,3 +153,26 @@ body {
 .queue-section form + form {
   margin-left: .25rem;
 }
+
+/* Patient status page
+-------------------------------------------------- */
+.queue-status {
+  max-width: 28rem;
+}
+
+.ticket-number {
+  margin-bottom: .5rem;
+  font-size: 4.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.lookup-code {
+  font-size: 1.1rem;
+  letter-spacing: .1em;
+}
+
+.queue-facts dt {
+  font-weight: 400;
+  color: #6c757d;
+}
