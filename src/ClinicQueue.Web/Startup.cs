@@ -33,6 +33,7 @@ namespace ClinicQueue.Web
                 });
 
             services.AddSingleton<IClock, LocalClock>();
+            services.AddScoped<IQueueService, QueueService>();
 
             services.AddRazorPages(options =>
             {
