@@ -1,9 +1,7 @@
-using ClinicQueue.Web.Data;
 using ClinicQueue.Web.Models;
 using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +11,12 @@ namespace ClinicQueue.Web.Pages.Staff
 {
     public class DashboardModel : PageModel
     {
-        private readonly ClinicDbContext _db;
+        private readonly IQueueService _queue;
         private readonly IClock _clock;
 
-        public DashboardModel(ClinicDbContext db, IClock clock)
+        public DashboardModel(IQueueService queue, IClock clock)
         {
-            _db = db;
+            _queue = queue;
             _clock = clock;
         }
 
@@ -37,41 +35,25 @@ namespace ClinicQueue.Web.Pages.Staff
             await LoadAsync();
         }
 
-        public Task<IActionResult> OnPostCallAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Waiting, QueueStatus.Called, e => e.CalledAt = _clock.Now);
+        public Task<IActionResult> OnPostCallAsync(int id) => ChangeStatusAsync(id, QueueStatus.Called);
 
-        public Task<IActionResult> OnPostStartAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.InProgress, e => e.StartedAt = _clock.Now);
+        public Task<IActionResult> OnPostStartAsync(int id) => ChangeStatusAsync(id, QueueStatus.InProgress);
 
-        public Task<IActionResult> OnPostCompleteAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.InProgress, QueueStatus.Completed, e => e.CompletedAt = _clock.Now);
+        public Task<IActionResult> OnPostCompleteAsync(int id) => ChangeStatusAsync(id, QueueStatus.Completed);
 
-        public Task<IActionResult> OnPostNoShowAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.NoShow, e => e.CompletedAt = _clock.Now);
+        public Task<IActionResult> OnPostNoShowAsync(int id) => ChangeStatusAsync(id, QueueStatus.NoShow);
 
-        public Task<IActionResult> OnPostRequeueAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Called, QueueStatus.Waiting, e => e.CalledAt = null);
+        public Task<IActionResult> OnPostRequeueAsync(int id) => ChangeStatusAsync(id, QueueStatus.Waiting);
 
-        public Task<IActionResult> OnPostCancelAsync(int id) =>
-            UpdateStatusAsync(id, QueueStatus.Waiting, QueueStatus.Cancelled, e => e.CompletedAt = _clock.Now);
+        public Task<IActionResult> OnPostCancelAsync(int id) => ChangeStatusAsync(id, QueueStatus.Cancelled);
 
-        private async Task<IActionResult> UpdateStatusAsync(int id, QueueStatus from, QueueStatus to, Action<QueueEntry> apply)
+        private async Task<IActionResult> ChangeStatusAsync(int id, QueueStatus status)
         {
-            var entry = await _db.QueueEntries.FindAsync(id);
-            if (entry == null)
+            var result = await _queue.ChangeStatusAsync(id, status);
+            if (result == StatusChangeResult.NotFound)
             {
                 return NotFound();
             }
-
-            // Someone else may have already moved this entry on (two desks, stale page).
-            if (entry.Status != from)
-            {
-                return RedirectToPage();
-            }
-
-            entry.Status = to;
-            apply(entry);
-            await _db.SaveChangesAsync();
 
             return RedirectToPage();
         }
@@ -79,20 +61,12 @@ namespace ClinicQueue.Web.Pages.Staff
         private async Task LoadAsync()
         {
             Now = _clock.Now;
-            var today = Now.Date;
-            var entries = await _db.QueueEntries
-                .Include(e => e.Patient)
-                .Where(e => e.QueueDate == today)
-                .OrderByDescending(e => e.IsPriority)
-                .ThenBy(e => e.TicketNumber)
-                .ToListAsync();
+            var entries = await _queue.GetTodayAsync();
 
             Waiting = entries.Where(e => e.Status == QueueStatus.Waiting).ToList();
             Called = entries.Where(e => e.Status == QueueStatus.Called).ToList();
             InProgress = entries.Where(e => e.Status == QueueStatus.InProgress).ToList();
-            Done = entries
-                .Where(e => e.Status == QueueStatus.Completed || e.Status == QueueStatus.NoShow || e.Status == QueueStatus.Cancelled)
-                .ToList();
+            Done = entries.Where(e => e.Status.IsFinal()).ToList();
         }
     }
 }
