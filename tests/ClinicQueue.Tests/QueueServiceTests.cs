@@ -32,5 +32,41 @@ namespace ClinicQueue.Tests
             Assert.Equal(QueueStatus.Waiting, second.Status);
             Assert.False(string.IsNullOrEmpty(second.LookupCode));
         }
+
+        [Fact]
+        public async Task TicketNumbers_StartAgainTheNextDay()
+        {
+            await CheckIn("Ana Silva");
+            await CheckIn("Ben Okafor");
+
+            _clock.Advance(TimeSpan.FromDays(1));
+            var nextDay = await CheckIn("Cara Byrne");
+
+            Assert.Equal(1, nextDay.TicketNumber);
+        }
+
+        [Fact]
+        public async Task Position_CountsOnlyWaitingEntriesAhead()
+        {
+            var a = await CheckIn("Ana Silva");
+            var b = await CheckIn("Ben Okafor");
+            var c = await CheckIn("Cara Byrne");
+
+            await _service.ChangeStatusAsync(a.Id, QueueStatus.Called);
+
+            Assert.Null(await _service.GetPositionAsync(a));
+            Assert.Equal(1, await _service.GetPositionAsync(b));
+            Assert.Equal(2, await _service.GetPositionAsync(c));
+        }
+
+        [Fact]
+        public async Task Position_PriorityEntriesGoFirst()
+        {
+            var a = await CheckIn("Ana Silva");
+            var urgent = await CheckIn("Dev Patel", priority: true);
+
+            Assert.Equal(1, await _service.GetPositionAsync(urgent));
+            Assert.Equal(2, await _service.GetPositionAsync(a));
+        }
     }
 }
