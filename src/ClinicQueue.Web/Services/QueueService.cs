@@ -37,7 +37,7 @@ namespace ClinicQueue.Web.Services
             var now = _clock.Now;
             var patient = new Patient
             {
-                FullName = request.FullName,
+                FullName = request.FullName.Trim(),
                 Phone = request.Phone,
                 DateOfBirth = request.DateOfBirth,
                 CreatedAt = now
@@ -144,7 +144,7 @@ namespace ClinicQueue.Web.Services
                 QueueDate = today,
                 TicketNumber = (lastTicket ?? 0) + 1,
                 LookupCode = LookupCode.Generate(),
-                Reason = request.Reason,
+                Reason = request.Reason?.Trim(),
                 IsPriority = request.IsPriority,
                 Status = QueueStatus.Waiting,
                 CheckedInAt = now

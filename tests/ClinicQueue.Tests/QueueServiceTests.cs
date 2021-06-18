@@ -68,5 +68,13 @@ namespace ClinicQueue.Tests
             Assert.Equal(1, await _service.GetPositionAsync(urgent));
             Assert.Equal(2, await _service.GetPositionAsync(a));
         }
+
+        [Fact]
+        public async Task CheckIn_TrimsName()
+        {
+            var entry = await CheckIn("  Ana Silva ");
+
+            Assert.Equal("Ana Silva", entry.Patient.FullName);
+        }
     }
 }
