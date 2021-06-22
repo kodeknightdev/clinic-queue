@@ -35,13 +35,7 @@ namespace ClinicQueue.Web.Services
             }
 
             var now = _clock.Now;
-            var patient = new Patient
-            {
-                FullName = request.FullName.Trim(),
-                Phone = request.Phone,
-                DateOfBirth = request.DateOfBirth,
-                CreatedAt = now
-            };
+            var patient = await FindOrCreatePatientAsync(request, now);
 
             var entry = await CreateEntryAsync(patient, request, now);
             _db.QueueEntries.Add(entry);
@@ -129,6 +123,31 @@ namespace ClinicQueue.Web.Services
         public static bool CanTransition(QueueStatus from, QueueStatus to)
         {
             return AllowedTransitions.TryGetValue(from, out var allowed) && Array.IndexOf(allowed, to) >= 0;
+        }
+
+        private async Task<Patient> FindOrCreatePatientAsync(CheckInRequest request, DateTime now)
+        {
+            var name = request.FullName.Trim();
+            var phone = PhoneNumber.Normalize(request.Phone);
+
+            // Returning patients: match on phone + name so we don't pile up duplicates.
+            if (phone != null)
+            {
+                var existing = await _db.Patients
+                    .FirstOrDefaultAsync(p => p.Phone == phone && p.FullName == name);
+                if (existing != null)
+                {
+                    return existing;
+                }
+            }
+
+            return new Patient
+            {
+                FullName = name,
+                Phone = phone,
+                DateOfBirth = request.DateOfBirth,
+                CreatedAt = now
+            };
         }
 
         private async Task<QueueEntry> CreateEntryAsync(Patient patient, CheckInRequest request, DateTime now)

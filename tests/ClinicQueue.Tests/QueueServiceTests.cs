@@ -76,5 +76,24 @@ namespace ClinicQueue.Tests
 
             Assert.Equal("Ana Silva", entry.Patient.FullName);
         }
+
+        [Fact]
+        public async Task CheckIn_ReusesPatientWhenNameAndPhoneMatch()
+        {
+            var first = await _service.CheckInAsync(new CheckInRequest { FullName = "Ana Silva", Phone = "(555) 010-2030" });
+            _clock.Advance(TimeSpan.FromDays(3));
+            var second = await _service.CheckInAsync(new CheckInRequest { FullName = "Ana Silva", Phone = "555 010 2030" });
+
+            Assert.Equal(first.PatientId, second.PatientId);
+        }
+
+        [Fact]
+        public async Task CheckIn_WithoutPhone_AlwaysCreatesNewPatient()
+        {
+            var first = await CheckIn("Ana Silva");
+            var second = await CheckIn("Ana Silva");
+
+            Assert.NotEqual(first.PatientId, second.PatientId);
+        }
     }
 }
