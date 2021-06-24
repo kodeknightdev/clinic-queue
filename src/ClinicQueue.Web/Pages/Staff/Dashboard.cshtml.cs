@@ -30,9 +30,18 @@ namespace ClinicQueue.Web.Pages.Staff
 
         public IList<QueueEntry> Done { get; private set; } = new List<QueueEntry>();
 
+        /// <summary>Fingerprint of the queue as rendered; the live panel compares against it.</summary>
+        public string QueueToken { get; private set; }
+
         public async Task OnGetAsync()
         {
             await LoadAsync();
+        }
+
+        public async Task<IActionResult> OnGetSnapshotAsync()
+        {
+            var snapshot = await _queue.GetSnapshotAsync();
+            return new JsonResult(snapshot);
         }
 
         public Task<IActionResult> OnPostCallAsync(int id) => ChangeStatusAsync(id, QueueStatus.Called);
@@ -67,6 +76,7 @@ namespace ClinicQueue.Web.Pages.Staff
             Called = entries.Where(e => e.Status == QueueStatus.Called).ToList();
             InProgress = entries.Where(e => e.Status == QueueStatus.InProgress).ToList();
             Done = entries.Where(e => e.Status.IsFinal()).ToList();
+            QueueToken = QueueService.ComputeToken(entries);
         }
     }
 }

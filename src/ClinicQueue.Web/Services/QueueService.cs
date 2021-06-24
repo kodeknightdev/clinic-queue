@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ClinicQueue.Web.Services
@@ -120,9 +122,45 @@ namespace ClinicQueue.Web.Services
             return StatusChangeResult.Updated;
         }
 
+        public async Task<QueueSnapshot> GetSnapshotAsync()
+        {
+            var entries = await GetTodayAsync();
+            var now = DateTime.UtcNow;
+            var waiting = entries.Where(e => e.Status == QueueStatus.Waiting).ToList();
+
+            return new QueueSnapshot
+            {
+                Token = ComputeToken(entries),
+                WaitingCount = waiting.Count,
+                CalledCount = entries.Count(e => e.Status == QueueStatus.Called),
+                InProgressCount = entries.Count(e => e.Status == QueueStatus.InProgress),
+                CompletedCount = entries.Count(e => e.Status == QueueStatus.Completed),
+                Waiting = waiting.Select((e, i) => new QueueSnapshotItem
+                {
+                    Position = i + 1,
+                    Ticket = e.TicketNumber,
+                    Name = e.Patient.FullName,
+                    IsPriority = e.IsPriority,
+                    WaitedMinutes = (int)(now - e.CheckedInAt).TotalMinutes
+                }).ToList()
+            };
+        }
+
         public static bool CanTransition(QueueStatus from, QueueStatus to)
         {
             return AllowedTransitions.TryGetValue(from, out var allowed) && Array.IndexOf(allowed, to) >= 0;
+        }
+
+        /// <summary>
+        /// Short fingerprint of the queue (ids + statuses). The dashboard compares the value it
+        /// was rendered with against the live one to tell whether its tables are out of date.
+        /// </summary>
+        public static string ComputeToken(IEnumerable<QueueEntry> entries)
+        {
+            var raw = string.Join(";", entries.OrderBy(e => e.Id).Select(e => e.Id + ":" + (int)e.Status));
+            using var sha = SHA256.Create();
+            var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(raw));
+            return BitConverter.ToString(hash, 0, 6).Replace("-", "").ToLowerInvariant();
         }
 
         private async Task<Patient> FindOrCreatePatientAsync(CheckInRequest request, DateTime now)

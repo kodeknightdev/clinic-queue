@@ -17,5 +17,7 @@ namespace ClinicQueue.Web.Services
         Task<IReadOnlyList<QueueEntry>> GetTodayAsync();
 
         Task<StatusChangeResult> ChangeStatusAsync(int entryId, QueueStatus newStatus);
+
+        Task<QueueSnapshot> GetSnapshotAsync();
     }
 }
