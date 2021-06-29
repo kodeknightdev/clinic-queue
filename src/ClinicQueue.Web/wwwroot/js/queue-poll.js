@@ -23,10 +23,50 @@
     }
   }
 
+  function renderList(items) {
+    var list = field('list');
+    while (list.firstChild) {
+      list.removeChild(list.firstChild);
+    }
+
+    if (!items.length) {
+      var empty = document.createElement('li');
+      empty.className = 'live-empty';
+      empty.textContent = 'Nobody waiting.';
+      list.appendChild(empty);
+      return;
+    }
+
+    items.forEach(function (item) {
+      var li = document.createElement('li');
+      if (item.isPriority) {
+        li.className = 'is-priority';
+      }
+
+      var ticket = document.createElement('span');
+      ticket.className = 'live-ticket';
+      ticket.textContent = '#' + item.ticket;
+
+      var name = document.createElement('span');
+      name.className = 'live-name';
+      name.textContent = item.name;
+
+      var waited = document.createElement('span');
+      waited.className = 'live-waited';
+      waited.textContent = item.waitedMinutes + ' min';
+
+      li.appendChild(ticket);
+      li.appendChild(name);
+      li.appendChild(waited);
+      list.appendChild(li);
+    });
+  }
+
   function render(snapshot) {
     setCount('waitingCount', snapshot.waitingCount);
     setCount('calledCount', snapshot.calledCount);
     setCount('inProgressCount', snapshot.inProgressCount);
+    renderList(snapshot.waiting);
     field('updated').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
