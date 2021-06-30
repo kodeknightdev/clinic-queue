@@ -11,6 +11,7 @@
 
   var url = panel.getAttribute('data-snapshot-url');
   var interval = 10000;
+  var timer = null;
 
   function field(name) {
     return panel.querySelector('[data-field="' + name + '"]');
@@ -70,7 +71,13 @@
     field('updated').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
+  function schedule(delay) {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(poll, delay);
+  }
+
   function poll() {
+    timer = null;
     fetch(url, {
       credentials: 'same-origin',
       cache: 'no-store',
@@ -84,12 +91,22 @@
       })
       .then(function (snapshot) {
         render(snapshot);
+        schedule(interval);
       })
       .catch(function (err) {
         console.warn('Live queue refresh failed', err);
       });
   }
 
+  // No point polling while the tab is in the background.
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      window.clearTimeout(timer);
+      timer = null;
+    } else if (!timer) {
+      poll();
+    }
+  });
+
   poll();
-  window.setInterval(poll, interval);
 })();
