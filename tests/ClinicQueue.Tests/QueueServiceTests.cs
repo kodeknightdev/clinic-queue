@@ -95,5 +95,20 @@ namespace ClinicQueue.Tests
 
             Assert.NotEqual(first.PatientId, second.PatientId);
         }
+
+        [Fact]
+        public async Task SnapshotToken_ChangesWhenAStatusChanges()
+        {
+            var a = await CheckIn("Ana Silva");
+            await CheckIn("Ben Okafor");
+
+            var before = await _service.GetSnapshotAsync();
+            await _service.ChangeStatusAsync(a.Id, QueueStatus.Called);
+            var after = await _service.GetSnapshotAsync();
+
+            Assert.NotEqual(before.Token, after.Token);
+            Assert.Equal(1, after.WaitingCount);
+            Assert.Equal("Ben Okafor", after.Waiting[0].Name);
+        }
     }
 }

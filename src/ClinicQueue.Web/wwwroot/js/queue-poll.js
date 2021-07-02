@@ -13,6 +13,7 @@
   var interval = 10000;
   var maxDelay = 60000;
   var failures = 0;
+  var pageToken = panel.getAttribute('data-token');
   var timer = null;
 
   function field(name) {
@@ -71,6 +72,7 @@
     setCount('inProgressCount', snapshot.inProgressCount);
     renderList(snapshot.waiting);
     field('updated').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    field('stale').classList.toggle('d-none', snapshot.token === pageToken);
   }
 
   function schedule(delay) {
