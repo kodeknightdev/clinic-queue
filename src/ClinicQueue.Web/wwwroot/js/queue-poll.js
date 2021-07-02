@@ -11,6 +11,8 @@
 
   var url = panel.getAttribute('data-snapshot-url');
   var interval = 10000;
+  var maxDelay = 60000;
+  var failures = 0;
   var timer = null;
 
   function field(name) {
@@ -90,11 +92,14 @@
         return res.json();
       })
       .then(function (snapshot) {
+        failures = 0;
         render(snapshot);
         schedule(interval);
       })
-      .catch(function (err) {
-        console.warn('Live queue refresh failed', err);
+      .catch(function () {
+        // Server restarting / wifi blip: keep trying, but back off.
+        failures++;
+        schedule(Math.min(interval * Math.pow(2, failures), maxDelay));
       });
   }
 
