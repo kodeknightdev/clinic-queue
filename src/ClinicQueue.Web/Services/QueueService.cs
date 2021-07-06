@@ -125,7 +125,7 @@ namespace ClinicQueue.Web.Services
         public async Task<QueueSnapshot> GetSnapshotAsync()
         {
             var entries = await GetTodayAsync();
-            var now = DateTime.UtcNow;
+            var now = _clock.Now;
             var waiting = entries.Where(e => e.Status == QueueStatus.Waiting).ToList();
 
             return new QueueSnapshot

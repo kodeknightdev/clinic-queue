@@ -57,7 +57,7 @@
 
       var waited = document.createElement('span');
       waited.className = 'live-waited';
-      waited.textContent = item.waitedMinutes + ' min';
+      waited.textContent = Math.max(0, item.waitedMinutes) + ' min';
 
       li.appendChild(ticket);
       li.appendChild(name);
