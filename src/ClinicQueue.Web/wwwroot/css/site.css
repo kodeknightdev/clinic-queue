@@ -176,3 +176,64 @@ body {
   font-weight: 400;
   color: #6c757d;
 }
+
+/* Live queue panel
+-------------------------------------------------- */
+.live-queue {
+  position: sticky;
+  top: 1rem;
+}
+
+.live-counts {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-size: .9rem;
+  color: #6c757d;
+}
+
+.live-count {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.live-list {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.live-list li {
+  display: flex;
+  padding: .35rem 0;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.live-list li.is-priority {
+  background-color: #fff5f5;
+}
+
+.live-ticket {
+  width: 3.5rem;
+  font-weight: 600;
+}
+
+.live-name {
+  flex: 1;
+}
+
+.live-waited {
+  font-size: .85rem;
+  color: #6c757d;
+}
+
+.live-empty {
+  color: #6c757d;
+}
+
+.live-notice {
+  margin: 1rem 0 0;
+  font-size: .9rem;
+}
