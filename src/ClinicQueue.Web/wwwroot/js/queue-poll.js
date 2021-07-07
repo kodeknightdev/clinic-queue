@@ -15,6 +15,7 @@
   var failures = 0;
   var pageToken = panel.getAttribute('data-token');
   var timer = null;
+  var stopped = false;
 
   function field(name) {
     return panel.querySelector('[data-field="' + name + '"]');
@@ -75,6 +76,11 @@
     field('stale').classList.toggle('d-none', snapshot.token === pageToken);
   }
 
+  function signedOut() {
+    stopped = true;
+    field('signed-out').classList.remove('d-none');
+  }
+
   function schedule(delay) {
     window.clearTimeout(timer);
     timer = window.setTimeout(poll, delay);
@@ -88,12 +94,19 @@
       headers: { 'Accept': 'application/json' }
     })
       .then(function (res) {
+        if (res.status === 401) {
+          signedOut();
+          return null;
+        }
         if (!res.ok) {
           throw new Error('HTTP ' + res.status);
         }
         return res.json();
       })
       .then(function (snapshot) {
+        if (!snapshot) {
+          return;
+        }
         failures = 0;
         render(snapshot);
         schedule(interval);
@@ -110,7 +123,7 @@
     if (document.hidden) {
       window.clearTimeout(timer);
       timer = null;
-    } else if (!timer) {
+    } else if (!timer && !stopped) {
       poll();
     }
   });

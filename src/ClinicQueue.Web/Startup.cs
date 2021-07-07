@@ -3,10 +3,12 @@ using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
 namespace ClinicQueue.Web
 {
@@ -30,6 +32,18 @@ namespace ClinicQueue.Web
                 {
                     options.LoginPath = "/Staff/Login";
                     options.LogoutPath = "/Staff/Logout";
+                    options.Events.OnRedirectToLogin = context =>
+                    {
+                        // fetch() polling wants a status code, not the sign-in page HTML
+                        if (context.Request.Headers["Accept"].ToString().Contains("application/json"))
+                        {
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            return Task.CompletedTask;
+                        }
+
+                        context.Response.Redirect(context.RedirectUri);
+                        return Task.CompletedTask;
+                    };
                 });
 
             services.AddSingleton<IClock, LocalClock>();
