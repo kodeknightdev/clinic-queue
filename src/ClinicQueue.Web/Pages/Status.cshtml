@@ -26,7 +26,8 @@ else
         <div class="alert alert-success">You're checked in. Please take a seat &mdash; we'll call your number.</div>
     }
 
-    <div class="card queue-status">
+    <div id="queue-status" class="card queue-status"
+         data-poll-url="@Url.Page("/Status", "Position", new { code = Model.Entry.LookupCode })">
         <div class="card-body text-center">
             <p class="mb-1 text-muted">Your ticket</p>
             <p class="ticket-number">@Model.Entry.TicketNumber</p>
@@ -40,4 +41,12 @@ else
             </dl>
         </div>
     </div>
+    <p class="text-muted small mt-2">This page updates automatically.</p>
+}
+
+@section Scripts {
+    @if (Model.Entry != null && !Model.Entry.Status.IsFinal())
+    {
+        <script src="~/js/status-poll.js" asp-append-version="true"></script>
+    }
 }

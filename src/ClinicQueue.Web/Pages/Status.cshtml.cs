@@ -44,5 +44,24 @@ namespace ClinicQueue.Web.Pages
 
             Position = await _queue.GetPositionAsync(Entry);
         }
+
+        /// <summary>JSON for status-poll.js.</summary>
+        public async Task<IActionResult> OnGetPositionAsync()
+        {
+            var entry = string.IsNullOrWhiteSpace(Code) ? null : await _queue.FindByLookupCodeAsync(Code);
+            if (entry == null)
+            {
+                return NotFound();
+            }
+
+            var position = await _queue.GetPositionAsync(entry);
+            return new JsonResult(new
+            {
+                status = entry.Status.ToString(),
+                statusLabel = entry.Status.Label(),
+                position,
+                isFinal = entry.Status.IsFinal()
+            });
+        }
     }
 }
