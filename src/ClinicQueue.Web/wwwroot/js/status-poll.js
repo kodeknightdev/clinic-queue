@@ -25,6 +25,13 @@
   function render(data) {
     set('status', data.statusLabel);
     set('position', data.position !== null ? data.position : '–');
+
+    var wasCalled = root.classList.contains('is-called');
+    var isCalled = data.status === 'Called';
+    root.classList.toggle('is-called', isCalled);
+    if (isCalled && !wasCalled && navigator.vibrate) {
+      navigator.vibrate([200, 100, 200]);
+    }
     finished = data.isFinal;
   }
 

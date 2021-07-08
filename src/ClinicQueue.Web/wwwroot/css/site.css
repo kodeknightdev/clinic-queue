@@ -237,3 +237,18 @@ body {
   margin: 1rem 0 0;
   font-size: .9rem;
 }
+
+.called-message {
+  display: none;
+  margin: 1rem 0 0;
+  font-weight: 600;
+}
+
+.queue-status.is-called {
+  border-color: #f0b400;
+  background-color: #fff8e1;
+}
+
+.queue-status.is-called .called-message {
+  display: block;
+}
