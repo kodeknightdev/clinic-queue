@@ -146,6 +146,17 @@ namespace ClinicQueue.Web.Services
             };
         }
 
+        public async Task<int?> EstimateWaitMinutesAsync(int? position)
+        {
+            if (position == null)
+            {
+                return null;
+            }
+
+            var average = await AverageConsultMinutesAsync();
+            return (int)Math.Ceiling(average * (position.Value - 1));
+        }
+
         public static bool CanTransition(QueueStatus from, QueueStatus to)
         {
             return AllowedTransitions.TryGetValue(from, out var allowed) && Array.IndexOf(allowed, to) >= 0;
@@ -206,6 +217,17 @@ namespace ClinicQueue.Web.Services
                 Status = QueueStatus.Waiting,
                 CheckedInAt = now
             };
+        }
+
+        private async Task<double> AverageConsultMinutesAsync()
+        {
+            var today = _clock.Now.Date;
+            var consults = await _db.QueueEntries
+                .Where(e => e.QueueDate == today && e.StartedAt != null && e.CompletedAt != null)
+                .Select(e => new { e.StartedAt, e.CompletedAt })
+                .ToListAsync();
+
+            return consults.Average(c => (c.CompletedAt.Value - c.StartedAt.Value).TotalMinutes);
         }
     }
 }

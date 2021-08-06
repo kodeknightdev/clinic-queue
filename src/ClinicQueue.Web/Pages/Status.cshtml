@@ -38,6 +38,8 @@ else
                 <dd class="col-6 text-left" data-field="status">@Model.Entry.Status.Label()</dd>
                 <dt class="col-6 text-right">Place in queue</dt>
                 <dd class="col-6 text-left" data-field="position">@(Model.Position?.ToString() ?? "–")</dd>
+                <dt class="col-6 text-right">Estimated wait</dt>
+                <dd class="col-6 text-left" data-field="estimate">@StatusModel.DescribeEstimate(Model.EstimatedMinutes)</dd>
             </dl>
 
             <p class="called-message">Your number has been called &mdash; please come to the front desk.</p>

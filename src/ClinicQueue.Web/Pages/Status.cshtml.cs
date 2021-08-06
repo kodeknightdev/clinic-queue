@@ -26,6 +26,8 @@ namespace ClinicQueue.Web.Pages
 
         public int? Position { get; private set; }
 
+        public int? EstimatedMinutes { get; private set; }
+
         public bool NotFoundCode { get; private set; }
 
         public async Task OnGetAsync()
@@ -43,6 +45,7 @@ namespace ClinicQueue.Web.Pages
             }
 
             Position = await _queue.GetPositionAsync(Entry);
+            EstimatedMinutes = await _queue.EstimateWaitMinutesAsync(Position);
         }
 
         /// <summary>JSON for status-poll.js.</summary>
@@ -60,8 +63,19 @@ namespace ClinicQueue.Web.Pages
                 status = entry.Status.ToString(),
                 statusLabel = entry.Status.Label(),
                 position,
+                estimatedMinutes = await _queue.EstimateWaitMinutesAsync(position),
                 isFinal = entry.Status.IsFinal()
             });
+        }
+
+        public static string DescribeEstimate(int? minutes)
+        {
+            if (minutes == null)
+            {
+                return "–";
+            }
+
+            return minutes < 1 ? "any minute now" : $"about {minutes} min";
         }
     }
 }

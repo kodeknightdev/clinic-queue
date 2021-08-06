@@ -19,5 +19,7 @@ namespace ClinicQueue.Web.Services
         Task<StatusChangeResult> ChangeStatusAsync(int entryId, QueueStatus newStatus);
 
         Task<QueueSnapshot> GetSnapshotAsync();
+
+        Task<int?> EstimateWaitMinutesAsync(int? position);
     }
 }

@@ -22,9 +22,17 @@
     }
   }
 
+  function describeEstimate(minutes) {
+    if (minutes === null || minutes === undefined) {
+      return '–';
+    }
+    return minutes < 1 ? 'any minute now' : 'about ' + minutes + ' min';
+  }
+
   function render(data) {
     set('status', data.statusLabel);
     set('position', data.position !== null ? data.position : '–');
+    set('estimate', describeEstimate(data.estimatedMinutes));
 
     var wasCalled = root.classList.contains('is-called');
     var isCalled = data.status === 'Called';
