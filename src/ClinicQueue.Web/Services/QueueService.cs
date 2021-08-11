@@ -12,6 +12,9 @@ namespace ClinicQueue.Web.Services
 {
     public class QueueService : IQueueService
     {
+        // Used for estimates until the first consult of the day has finished.
+        private const double DefaultConsultMinutes = 12;
+
         private static readonly Dictionary<QueueStatus, QueueStatus[]> AllowedTransitions =
             new Dictionary<QueueStatus, QueueStatus[]>
             {
@@ -153,7 +156,7 @@ namespace ClinicQueue.Web.Services
                 return null;
             }
 
-            var average = await AverageConsultMinutesAsync();
+            var average = await AverageConsultMinutesAsync() ?? DefaultConsultMinutes;
             return (int)Math.Ceiling(average * (position.Value - 1));
         }
 
@@ -219,13 +222,18 @@ namespace ClinicQueue.Web.Services
             };
         }
 
-        private async Task<double> AverageConsultMinutesAsync()
+        private async Task<double?> AverageConsultMinutesAsync()
         {
             var today = _clock.Now.Date;
             var consults = await _db.QueueEntries
                 .Where(e => e.QueueDate == today && e.StartedAt != null && e.CompletedAt != null)
                 .Select(e => new { e.StartedAt, e.CompletedAt })
                 .ToListAsync();
+
+            if (consults.Count == 0)
+            {
+                return null;
+            }
 
             return consults.Average(c => (c.CompletedAt.Value - c.StartedAt.Value).TotalMinutes);
         }

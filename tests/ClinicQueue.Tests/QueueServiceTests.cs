@@ -110,5 +110,34 @@ namespace ClinicQueue.Tests
             Assert.Equal(1, after.WaitingCount);
             Assert.Equal("Ben Okafor", after.Waiting[0].Name);
         }
+
+        [Fact]
+        public async Task Estimate_UsesDefaultBeforeAnyConsultFinishes()
+        {
+            await CheckIn("Ana Silva");
+            var b = await CheckIn("Ben Okafor");
+
+            var minutes = await _service.EstimateWaitMinutesAsync(await _service.GetPositionAsync(b));
+
+            Assert.Equal(12, minutes);
+        }
+
+        [Fact]
+        public async Task Estimate_UsesAverageConsultLength()
+        {
+            var a = await CheckIn("Ana Silva");
+            await CheckIn("Ben Okafor");
+            var c = await CheckIn("Cara Byrne");
+
+            await _service.ChangeStatusAsync(a.Id, QueueStatus.Called);
+            await _service.ChangeStatusAsync(a.Id, QueueStatus.InProgress);
+            _clock.Advance(TimeSpan.FromMinutes(20));
+            await _service.ChangeStatusAsync(a.Id, QueueStatus.Completed);
+
+            // c is now second in line, so one consult ahead of them
+            var minutes = await _service.EstimateWaitMinutesAsync(await _service.GetPositionAsync(c));
+
+            Assert.Equal(20, minutes);
+        }
     }
 }
