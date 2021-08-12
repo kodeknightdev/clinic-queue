@@ -30,6 +30,8 @@ namespace ClinicQueue.Web.Data
                 b.Property(e => e.Reason).HasMaxLength(200);
                 b.Property(e => e.QueueDate).HasColumnType("date");
                 b.Property(e => e.LookupCode).HasMaxLength(12);
+                b.Property(e => e.Notes).HasMaxLength(500);
+                b.Property(e => e.RowVersion).IsRowVersion();
 
                 b.HasIndex(e => new { e.QueueDate, e.TicketNumber }).IsUnique();
                 b.HasIndex(e => e.LookupCode).IsUnique();

@@ -31,5 +31,9 @@ namespace ClinicQueue.Web.Models
         public DateTime? StartedAt { get; set; }
 
         public DateTime? CompletedAt { get; set; }
+
+        public string Notes { get; set; }
+
+        public byte[] RowVersion { get; set; }
     }
 }
