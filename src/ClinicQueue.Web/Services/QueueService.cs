@@ -15,6 +15,8 @@ namespace ClinicQueue.Web.Services
         // Used for estimates until the first consult of the day has finished.
         private const double DefaultConsultMinutes = 12;
 
+        private const int MaxCheckInAttempts = 3;
+
         private static readonly Dictionary<QueueStatus, QueueStatus[]> AllowedTransitions =
             new Dictionary<QueueStatus, QueueStatus[]>
             {
@@ -42,11 +44,23 @@ namespace ClinicQueue.Web.Services
             var now = _clock.Now;
             var patient = await FindOrCreatePatientAsync(request, now);
 
-            var entry = await CreateEntryAsync(patient, request, now);
-            _db.QueueEntries.Add(entry);
-            await _db.SaveChangesAsync();
+            for (var attempt = 1; ; attempt++)
+            {
+                var entry = await CreateEntryAsync(patient, request, now);
+                _db.QueueEntries.Add(entry);
 
-            return entry;
+                try
+                {
+                    await _db.SaveChangesAsync();
+                    return entry;
+                }
+                catch (DbUpdateException) when (attempt < MaxCheckInAttempts)
+                {
+                    // Two desks checked someone in at the same moment and got the same ticket
+                    // number (unique index). Drop this entry and try again with the next number.
+                    _db.Entry(entry).State = EntityState.Detached;
+                }
+            }
         }
 
         public Task<QueueEntry> FindByLookupCodeAsync(string code)
