@@ -6,6 +6,11 @@
 
 <h1>Today's queue</h1>
 
+@if (Model.StatusMessage != null)
+{
+    <div class="alert alert-warning">@Model.StatusMessage</div>
+}
+
 <div class="row">
     <div class="col-lg-8">
         <section class="card queue-section mb-3">

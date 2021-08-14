@@ -33,6 +33,9 @@ namespace ClinicQueue.Web.Pages.Staff
         /// <summary>Fingerprint of the queue as rendered; the live panel compares against it.</summary>
         public string QueueToken { get; private set; }
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         public async Task OnGetAsync()
         {
             await LoadAsync();
@@ -59,12 +62,21 @@ namespace ClinicQueue.Web.Pages.Staff
         private async Task<IActionResult> ChangeStatusAsync(int id, QueueStatus status)
         {
             var result = await _queue.ChangeStatusAsync(id, status);
-            if (result == StatusChangeResult.NotFound)
-            {
-                return NotFound();
-            }
-
+            StatusMessage = Describe(result);
             return RedirectToPage();
+        }
+
+        private static string Describe(StatusChangeResult result)
+        {
+            switch (result)
+            {
+                case StatusChangeResult.NotFound:
+                    return "That queue entry no longer exists.";
+                case StatusChangeResult.InvalidTransition:
+                    return "That entry had already moved on, so nothing was changed.";
+                default:
+                    return null;
+            }
         }
 
         private async Task LoadAsync()
