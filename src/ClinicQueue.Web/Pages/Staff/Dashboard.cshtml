@@ -36,7 +36,9 @@
                                     <span class="badge badge-danger ml-1">Urgent</span>
                                 }
                             </td>
-                            <td>@entry.Patient.FullName</td>
+                            <td>@entry.Patient.FullName
+                                <partial name="_EntryNotes" model="entry" />
+                            </td>
                             <td>@entry.Reason</td>
                             <td>@entry.CheckedInAt.ToString("HH:mm")</td>
                             <td>@((int)Math.Max(0, (Model.Now - entry.CheckedInAt).TotalMinutes)) min</td>
@@ -67,7 +69,9 @@
                                     <span class="badge badge-danger ml-1">Urgent</span>
                                 }
                             </td>
-                            <td>@entry.Patient.FullName</td>
+                            <td>@entry.Patient.FullName
+                                <partial name="_EntryNotes" model="entry" />
+                            </td>
                             <td>@entry.CalledAt?.ToString("HH:mm")</td>
                             <td class="text-right text-nowrap">
                                 <form method="post" asp-page-handler="Start" asp-route-id="@entry.Id" class="d-inline">
@@ -99,7 +103,9 @@
                                     <span class="badge badge-danger ml-1">Urgent</span>
                                 }
                             </td>
-                            <td>@entry.Patient.FullName</td>
+                            <td>@entry.Patient.FullName
+                                <partial name="_EntryNotes" model="entry" />
+                            </td>
                             <td>@entry.StartedAt?.ToString("HH:mm")</td>
                             <td class="text-right text-nowrap">
                                 <form method="post" asp-page-handler="Complete" asp-route-id="@entry.Id" class="d-inline">

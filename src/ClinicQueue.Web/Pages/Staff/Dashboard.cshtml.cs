@@ -59,6 +59,16 @@ namespace ClinicQueue.Web.Pages.Staff
 
         public Task<IActionResult> OnPostCancelAsync(int id) => ChangeStatusAsync(id, QueueStatus.Cancelled);
 
+        public async Task<IActionResult> OnPostNotesAsync(int id, string notes)
+        {
+            if (!await _queue.UpdateNotesAsync(id, notes))
+            {
+                StatusMessage = "That queue entry no longer exists.";
+            }
+
+            return RedirectToPage();
+        }
+
         private async Task<IActionResult> ChangeStatusAsync(int id, QueueStatus status)
         {
             var result = await _queue.ChangeStatusAsync(id, status);

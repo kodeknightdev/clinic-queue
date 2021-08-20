@@ -147,6 +147,21 @@ namespace ClinicQueue.Web.Services
             return StatusChangeResult.Updated;
         }
 
+        public async Task<bool> UpdateNotesAsync(int entryId, string notes)
+        {
+            var entry = await _db.QueueEntries.FindAsync(entryId);
+            if (entry == null)
+            {
+                return false;
+            }
+
+            notes = notes?.Trim();
+            entry.Notes = string.IsNullOrEmpty(notes) ? null : notes;
+            await _db.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<QueueSnapshot> GetSnapshotAsync()
         {
             var entries = await GetTodayAsync();

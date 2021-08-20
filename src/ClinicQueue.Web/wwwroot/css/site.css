@@ -252,3 +252,13 @@ body {
 .queue-status.is-called .called-message {
   display: block;
 }
+
+.entry-notes summary {
+  font-size: .85rem;
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.entry-notes[open] summary {
+  color: #212529;
+}

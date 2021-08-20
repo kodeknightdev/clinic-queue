@@ -1,0 +1,9 @@
+@model QueueEntry
+
+<details class="entry-notes">
+    <summary>@(string.IsNullOrEmpty(Model.Notes) ? "Add note" : Model.Notes)</summary>
+    <form method="post" asp-page="/Staff/Dashboard" asp-page-handler="Notes" asp-route-id="@Model.Id" class="form-inline mt-1">
+        <input name="notes" value="@Model.Notes" maxlength="500" class="form-control form-control-sm mr-1" />
+        <button type="submit" class="btn btn-sm btn-outline-secondary">Save</button>
+    </form>
+</details>
