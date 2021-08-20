@@ -4,6 +4,7 @@ namespace ClinicQueue.Web.Services
     {
         Updated,
         NotFound,
-        InvalidTransition
+        InvalidTransition,
+        Conflict
     }
 }

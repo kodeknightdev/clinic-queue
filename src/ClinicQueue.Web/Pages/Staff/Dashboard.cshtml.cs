@@ -74,6 +74,8 @@ namespace ClinicQueue.Web.Pages.Staff
                     return "That queue entry no longer exists.";
                 case StatusChangeResult.InvalidTransition:
                     return "That entry had already moved on, so nothing was changed.";
+                case StatusChangeResult.Conflict:
+                    return "Someone else updated that entry at the same moment. Please check it and try again.";
                 default:
                     return null;
             }

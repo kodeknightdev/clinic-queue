@@ -134,7 +134,15 @@ namespace ClinicQueue.Web.Services
             }
 
             entry.Status = newStatus;
-            await _db.SaveChangesAsync();
+
+            try
+            {
+                await _db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusChangeResult.Conflict;
+            }
 
             return StatusChangeResult.Updated;
         }
