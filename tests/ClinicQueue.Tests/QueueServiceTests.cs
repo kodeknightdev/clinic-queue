@@ -139,5 +139,17 @@ namespace ClinicQueue.Tests
 
             Assert.Equal(20, minutes);
         }
+
+        [Fact]
+        public async Task UpdateNotes_ClearsBlankNotes()
+        {
+            var entry = await CheckIn("Ana Silva");
+
+            await _service.UpdateNotesAsync(entry.Id, " needs wheelchair access ");
+            Assert.Equal("needs wheelchair access", entry.Notes);
+
+            await _service.UpdateNotesAsync(entry.Id, "   ");
+            Assert.Null(entry.Notes);
+        }
     }
 }
