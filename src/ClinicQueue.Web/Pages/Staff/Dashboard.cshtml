@@ -43,10 +43,12 @@
                             <td>@entry.CheckedInAt.ToString("HH:mm")</td>
                             <td>@((int)Math.Max(0, (Model.Now - entry.CheckedInAt).TotalMinutes)) min</td>
                             <td class="text-right text-nowrap">
-                                <form method="post" asp-page-handler="Call" asp-route-id="@entry.Id" class="d-inline">
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@entry.Id" class="d-inline">
+                                    <input type="hidden" name="status" value="Called" />
                                     <button type="submit" class="btn btn-sm btn-primary">Call</button>
                                 </form>
-                                <form method="post" asp-page-handler="Cancel" asp-route-id="@entry.Id" class="d-inline">
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@entry.Id" class="d-inline">
+                                    <input type="hidden" name="status" value="Cancelled" />
                                     <button type="submit" class="btn btn-sm btn-outline-secondary">Cancel</button>
                                 </form>
                             </td>
@@ -74,13 +76,16 @@
                             </td>
                             <td>@entry.CalledAt?.ToString("HH:mm")</td>
                             <td class="text-right text-nowrap">
-                                <form method="post" asp-page-handler="Start" asp-route-id="@entry.Id" class="d-inline">
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@entry.Id" class="d-inline">
+                                    <input type="hidden" name="status" value="InProgress" />
                                     <button type="submit" class="btn btn-sm btn-primary">Start consult</button>
                                 </form>
-                                <form method="post" asp-page-handler="Requeue" asp-route-id="@entry.Id" class="d-inline">
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@entry.Id" class="d-inline">
+                                    <input type="hidden" name="status" value="Waiting" />
                                     <button type="submit" class="btn btn-sm btn-outline-secondary">Back to queue</button>
                                 </form>
-                                <form method="post" asp-page-handler="NoShow" asp-route-id="@entry.Id" class="d-inline">
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@entry.Id" class="d-inline">
+                                    <input type="hidden" name="status" value="NoShow" />
                                     <button type="submit" class="btn btn-sm btn-outline-danger">No-show</button>
                                 </form>
                             </td>
@@ -108,7 +113,8 @@
                             </td>
                             <td>@entry.StartedAt?.ToString("HH:mm")</td>
                             <td class="text-right text-nowrap">
-                                <form method="post" asp-page-handler="Complete" asp-route-id="@entry.Id" class="d-inline">
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@entry.Id" class="d-inline">
+                                    <input type="hidden" name="status" value="Completed" />
                                     <button type="submit" class="btn btn-sm btn-success">Done</button>
                                 </form>
                             </td>

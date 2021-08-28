@@ -47,17 +47,12 @@ namespace ClinicQueue.Web.Pages.Staff
             return new JsonResult(snapshot);
         }
 
-        public Task<IActionResult> OnPostCallAsync(int id) => ChangeStatusAsync(id, QueueStatus.Called);
-
-        public Task<IActionResult> OnPostStartAsync(int id) => ChangeStatusAsync(id, QueueStatus.InProgress);
-
-        public Task<IActionResult> OnPostCompleteAsync(int id) => ChangeStatusAsync(id, QueueStatus.Completed);
-
-        public Task<IActionResult> OnPostNoShowAsync(int id) => ChangeStatusAsync(id, QueueStatus.NoShow);
-
-        public Task<IActionResult> OnPostRequeueAsync(int id) => ChangeStatusAsync(id, QueueStatus.Waiting);
-
-        public Task<IActionResult> OnPostCancelAsync(int id) => ChangeStatusAsync(id, QueueStatus.Cancelled);
+        public async Task<IActionResult> OnPostSetStatusAsync(int id, QueueStatus status)
+        {
+            var result = await _queue.ChangeStatusAsync(id, status);
+            StatusMessage = Describe(result);
+            return RedirectToPage();
+        }
 
         public async Task<IActionResult> OnPostNotesAsync(int id, string notes)
         {
@@ -66,13 +61,6 @@ namespace ClinicQueue.Web.Pages.Staff
                 StatusMessage = "That queue entry no longer exists.";
             }
 
-            return RedirectToPage();
-        }
-
-        private async Task<IActionResult> ChangeStatusAsync(int id, QueueStatus status)
-        {
-            var result = await _queue.ChangeStatusAsync(id, status);
-            StatusMessage = Describe(result);
             return RedirectToPage();
         }
 
