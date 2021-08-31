@@ -19,7 +19,7 @@
             <ul>
                 @foreach (var entry in Model.NowServing)
                 {
-                    <li><span class="board-ticket">@entry.TicketNumber</span> <span class="board-name">@entry.Patient.FullName</span></li>
+                    <li class="board-ticket">@entry.TicketNumber</li>
                 }
             </ul>
         </section>
@@ -28,7 +28,7 @@
             <ul>
                 @foreach (var entry in Model.UpNext)
                 {
-                    <li><span class="board-ticket">@entry.TicketNumber</span> <span class="board-name">@entry.Patient.FullName</span></li>
+                    <li class="board-ticket">@entry.TicketNumber</li>
                 }
             </ul>
         </section>
