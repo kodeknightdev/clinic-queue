@@ -5,6 +5,13 @@
 }
 
 <h1>Today's queue</h1>
+<p class="text-muted dashboard-summary">
+    @Model.Summary.CheckedIn checked in today &middot; @Model.Summary.Seen seen &middot; @Model.Summary.NoShows no-shows
+    @if (Model.Summary.AverageConsultMinutes.HasValue)
+    {
+        <text>&middot; avg consult @Math.Round(Model.Summary.AverageConsultMinutes.Value) min</text>
+    }
+</p>
 
 @if (Model.StatusMessage != null)
 {

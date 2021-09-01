@@ -197,6 +197,19 @@ namespace ClinicQueue.Web.Services
             return (int)Math.Ceiling(average * (position.Value - 1));
         }
 
+        public async Task<QueueSummary> GetSummaryAsync()
+        {
+            var entries = await GetTodayAsync();
+
+            return new QueueSummary
+            {
+                CheckedIn = entries.Count,
+                Seen = entries.Count(e => e.Status == QueueStatus.Completed),
+                NoShows = entries.Count(e => e.Status == QueueStatus.NoShow),
+                AverageConsultMinutes = await AverageConsultMinutesAsync()
+            };
+        }
+
         public static bool CanTransition(QueueStatus from, QueueStatus to)
         {
             return AllowedTransitions.TryGetValue(from, out var allowed) && Array.IndexOf(allowed, to) >= 0;

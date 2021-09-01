@@ -30,6 +30,8 @@ namespace ClinicQueue.Web.Pages.Staff
 
         public IList<QueueEntry> Done { get; private set; } = new List<QueueEntry>();
 
+        public QueueSummary Summary { get; private set; }
+
         /// <summary>Fingerprint of the queue as rendered; the live panel compares against it.</summary>
         public string QueueToken { get; private set; }
 
@@ -89,6 +91,7 @@ namespace ClinicQueue.Web.Pages.Staff
             InProgress = entries.Where(e => e.Status == QueueStatus.InProgress).ToList();
             Done = entries.Where(e => e.Status.IsFinal()).ToList();
             QueueToken = QueueService.ComputeToken(entries);
+            Summary = await _queue.GetSummaryAsync();
         }
     }
 }
