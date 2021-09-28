@@ -2,6 +2,7 @@ using ClinicQueue.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
@@ -42,7 +43,7 @@ namespace ClinicQueue.Web.Pages
             return RedirectToPage("/Status", new { code = entry.LookupCode, checkedIn = true });
         }
 
-        public class CheckInInput
+        public class CheckInInput : IValidatableObject
         {
             [Required]
             [StringLength(100)]
@@ -63,6 +64,16 @@ namespace ClinicQueue.Web.Pages
 
             [Display(Name = "Urgent (front desk use)")]
             public bool IsPriority { get; set; }
+
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                if (DateOfBirth.HasValue && DateOfBirth.Value.Date > DateTime.Today)
+                {
+                    yield return new ValidationResult(
+                        "Date of birth can't be in the future.",
+                        new[] { nameof(DateOfBirth) });
+                }
+            }
         }
     }
 }
