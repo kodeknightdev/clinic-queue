@@ -49,6 +49,9 @@ namespace ClinicQueue.Web
             services.AddSingleton<IClock, LocalClock>();
             services.AddScoped<IQueueService, QueueService>();
 
+            services.AddHealthChecks()
+                .AddDbContextCheck<ClinicDbContext>();
+
             services.AddRazorPages(options =>
             {
                 options.Conventions.AuthorizeFolder("/Staff");
@@ -81,6 +84,7 @@ namespace ClinicQueue.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapHealthChecks("/health");
             });
         }
     }
