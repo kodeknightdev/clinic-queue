@@ -46,6 +46,8 @@ namespace ClinicQueue.Web
                     };
                 });
 
+            services.Configure<ClinicOptions>(Configuration.GetSection(ClinicOptions.SectionName));
+
             services.AddSingleton<IClock, LocalClock>();
             services.AddScoped<IQueueService, QueueService>();
 
