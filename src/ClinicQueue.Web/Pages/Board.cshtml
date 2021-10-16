@@ -1,5 +1,6 @@
 @page
 @model BoardModel
+@inject Microsoft.Extensions.Options.IOptions<ClinicOptions> Clinic
 @{
     Layout = null;
 }
@@ -9,7 +10,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="refresh" content="15" />
-    <title>Queue board</title>
+    <title>@Clinic.Value.Name - Queue</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/board.css" asp-append-version="true" />
 </head>
