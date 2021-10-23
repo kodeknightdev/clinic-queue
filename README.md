@@ -57,6 +57,17 @@ docker run -e ACCEPT_EULA=Y -e SA_PASSWORD=<your password> -p 1433:1433 -d mcr.m
 In Development the app applies migrations on startup and creates a staff
 account from the `Seed` section of `appsettings.Development.json`.
 
+## Configuration
+
+| Setting | What it does |
+| --- | --- |
+| `ConnectionStrings:ClinicDb` | SQL Server connection string |
+| `Clinic:Name` | Shown in the header and on the waiting room board |
+| `Seed:StaffUsername` / `Seed:StaffPassword` | Development only: staff account created on startup |
+
+Anything can be overridden with environment variables, e.g.
+`Clinic__Name="Riverside Family Clinic"`.
+
 ## Tests
 
 ```
