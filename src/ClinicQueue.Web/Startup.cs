@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Threading.Tasks;
 
 namespace ClinicQueue.Web
@@ -32,6 +33,8 @@ namespace ClinicQueue.Web
                 {
                     options.LoginPath = "/Staff/Login";
                     options.LogoutPath = "/Staff/Logout";
+                    options.ExpireTimeSpan = TimeSpan.FromHours(10);
+                    options.SlidingExpiration = true;
                     options.Events.OnRedirectToLogin = context =>
                     {
                         // fetch() polling wants a status code, not the sign-in page HTML
