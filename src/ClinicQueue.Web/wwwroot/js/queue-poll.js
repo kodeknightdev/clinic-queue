@@ -10,7 +10,7 @@
   }
 
   var url = panel.getAttribute('data-snapshot-url');
-  var interval = 10000;
+  var interval = parseInt(panel.getAttribute('data-interval'), 10) || 10000;
   var maxDelay = 60000;
   var failures = 0;
   var pageToken = panel.getAttribute('data-token');
