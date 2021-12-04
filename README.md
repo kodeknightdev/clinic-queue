@@ -68,6 +68,15 @@ account from the `Seed` section of `appsettings.Development.json`.
 Anything can be overridden with environment variables, e.g.
 `Clinic__Name="Riverside Family Clinic"`.
 
+## Resetting the development database
+
+```
+dotnet ef database drop --project src/ClinicQueue.Web
+dotnet run --project src/ClinicQueue.Web
+```
+
+The app re-applies migrations and re-seeds the staff account on the next start.
+
 ## Tests
 
 ```
