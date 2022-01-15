@@ -169,6 +169,10 @@ body {
   letter-spacing: .1em;
 }
 
+#code {
+  letter-spacing: .1em;
+}
+
 .queue-facts dt {
   font-weight: 400;
   color: #6c757d;
